@@ -32,7 +32,7 @@ jobs:
         terraform init \
           -backend-config="bucket=${TF_STATE_BUCKET_NAME}" \
           -backend-config="region=${AWS_REGION}"
-      working-directory: ./terraform
+      working-directory: terraform
 
     - name: Terraform Plan
       run: |
@@ -42,7 +42,7 @@ jobs:
           -var="private_key=${PRIVATE_SSH_KEY}" \
           -var="key_name=deployer" \
           -out=tfplan
-      working-directory: ./terraform
+      working-directory: terraform
 
     - name: Terraform Apply
       run: terraform apply -auto-approve tfplan
