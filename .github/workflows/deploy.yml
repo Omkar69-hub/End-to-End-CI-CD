@@ -30,8 +30,10 @@ jobs:
           -backend-config="region=${AWS_REGION}"
 
     - name: Terraform Plan
-      run: terraform plan
-      working-directory: terraform
+      run: |
+        terraform plan \
+          -var="region=${AWS_REGION}" \
+          -var="key_name=deployer"
 
     - name: Terraform Apply
       run: terraform apply -auto-approve
