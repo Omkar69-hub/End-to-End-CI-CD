@@ -17,35 +17,32 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - name: Checkout repository
+    - name: Checkout repo
       uses: actions/checkout@v4
-
-    - name: Debug repo structure (DO NOT REMOVE YET)
-      run: |
-        echo "PWD:"
-        pwd
-        echo "ROOT FILES:"
-        ls -la
-        echo "TERRAFORM FOLDER:"
-        ls -la terraform || echo "terraform folder NOT FOUND"
 
     - name: Setup Terraform
       uses: hashicorp/setup-terraform@v2
 
     - name: Terraform Init
+      working-directory: terraform
       run: |
-        terraform -chdir=terraform init \
+        terraform init \
           -backend-config="bucket=${TF_STATE_BUCKET_NAME}" \
           -backend-config="region=${AWS_REGION}"
 
     - name: Terraform Validate
-      run: terraform -chdir=terraform validate
+      working-directory: terraform
+      run: terraform validate
 
     - name: Terraform Plan
+      working-directory: terraform
       run: |
-        terraform -chdir=terraform plan \
+        terraform plan \
           -var="region=${AWS_REGION}" \
           -var="key_name=deployer"
+      working-directory: ./Terraform
 
     - name: Terraform Apply
-      run: terraform -chdir=terraform apply -auto-approve
+      working-directory: terraform
+      run: terraform apply -auto-approve
+      working-directory: ./Terraform
