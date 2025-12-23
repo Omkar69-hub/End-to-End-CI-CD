@@ -3,6 +3,7 @@ name: CI/CD with Terraform
 on:
   push:
     branches:
+      - main
       - Complete-CI/CD-with-Terraform-AWS
 
 env:
@@ -27,23 +28,22 @@ jobs:
         terraform_wrapper: false
 
     - name: Terraform Init
-      id : init
-      run: terraform init \
-        -backend-config="bucket=${TF_STATE_BUCKET_NAME}" \
-        -backend-config="region=${AWS_REGION}"
+      run: |
+        terraform init \
+          -backend-config="bucket=${TF_STATE_BUCKET_NAME}" \
+          -backend-config="region=${AWS_REGION}"
       working-directory: ./terraform
 
     - name: Terraform Plan
-      id: plan
-      run: terraform plan \
-        -var="region=${AWS_REGION}" \
-        -var="public_key=${PUBLIC_SSH_KEY}" \
-        -var="private_key=${PRIVATE_SSH_KEY}" \
-        -var="key_name=deployer" \
-        -out=tfplan
+      run: |
+        terraform plan \
+          -var="region=${AWS_REGION}" \
+          -var="public_key=${PUBLIC_SSH_KEY}" \
+          -var="private_key=${PRIVATE_SSH_KEY}" \
+          -var="key_name=deployer" \
+          -out=tfplan
       working-directory: ./terraform
 
     - name: Terraform Apply
-      id: apply
       run: terraform apply -auto-approve tfplan
       working-directory: ./terraform
